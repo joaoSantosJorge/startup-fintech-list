@@ -64,6 +64,7 @@ def nav_html(active):
         ("index.html", "Data Browser"),
         ("analysis.html", "Analysis"),
         ("recommendations.html", "Recommendations"),
+        ("shortlist.html", "★ Shortlist"),
     ]
     links = []
     for href, label in pages:
@@ -71,10 +72,13 @@ def nav_html(active):
             cls = "bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold"
         else:
             cls = "text-indigo-100 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition"
-        links.append(f'<a href="{href}" class="{cls}">{label}</a>')
-    return f"""
+        extra = ''
+        if label == "★ Shortlist":
+            extra = ' <span id="shortlist-count" class="bg-indigo-800 text-indigo-100 text-xs rounded-full px-1.5 py-0.5 ml-1"></span>'
+        links.append(f'<a href="{href}" class="{cls}">{label}{extra}</a>')
+    nav = f"""
     <nav class="bg-indigo-600 shadow-lg">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center gap-2">
             <span class="text-white font-bold text-lg tracking-tight">YC Fintech Dashboard</span>
@@ -85,6 +89,18 @@ def nav_html(active):
         </div>
       </div>
     </nav>"""
+    nav += """
+    <script>
+    (function() {
+      var SL_KEY = 'yc-fintech-shortlist';
+      try {
+        var ids = JSON.parse(localStorage.getItem(SL_KEY) || '[]');
+        var badge = document.getElementById('shortlist-count');
+        if (badge) badge.textContent = ids.length > 0 ? ids.length : '';
+      } catch(e) {}
+    })();
+    </script>"""
+    return nav
 
 
 HEAD = """<!DOCTYPE html>
@@ -147,7 +163,7 @@ def generate_index(companies):
     html = HEAD.format(title="Data Browser")
     html += nav_html("Data Browser")
     html += f"""
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="w-full px-4 sm:px-6 lg:px-8 py-8">
   <!-- Hero stats -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
     <div class="bg-white rounded-xl shadow-sm p-5 text-center">
@@ -196,19 +212,39 @@ def generate_index(companies):
     <button onclick="resetFilters()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Reset</button>
   </div>
 
+  <!-- Dimension Filters -->
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-gray-700">Dimension Filters</h3>
+      <button onclick="resetDimFilters()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Reset All</button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-3" id="dimFilters"></div>
+  </div>
+
   <!-- Table -->
   <div class="bg-white rounded-xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead class="bg-gray-50 text-left">
           <tr>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('name')">Name <span id="sort-name" class="text-xs"></span></th>
-            <th class="px-4 py-3 font-semibold text-gray-600 max-w-xs">One-liner</th>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('niche_category')">Niche <span id="sort-niche_category" class="text-xs"></span></th>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('total_score')">Score <span id="sort-total_score" class="text-xs"></span></th>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('replicability')">Replic. <span id="sort-replicability" class="text-xs"></span></th>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('status')">Status <span id="sort-status" class="text-xs"></span></th>
-            <th class="px-4 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600" onclick="sortBy('batch')">Batch <span id="sort-batch" class="text-xs"></span></th>
+            <th class="px-2 py-3 w-10"></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('name')">Name <span id="sort-name" class="text-xs"></span></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 max-w-xs">One-liner</th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('niche_category')">Niche <span id="sort-niche_category" class="text-xs"></span></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('total_score')">Score <span id="sort-total_score" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('urgency')" title="Urgency">Urg <span id="sort-urgency" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('market_size')" title="Market Size">Mkt <span id="sort-market_size" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('pricing_potential')" title="Pricing Potential">Price <span id="sort-pricing_potential" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('acquisition_cost')" title="Acquisition Cost">Acq <span id="sort-acquisition_cost" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('delivery_cost')" title="Delivery Cost">Del <span id="sort-delivery_cost" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('uniqueness')" title="Uniqueness">Uniq <span id="sort-uniqueness" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('speed_to_market')" title="Speed to Market">Speed <span id="sort-speed_to_market" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('upfront_investment')" title="Upfront Investment">Invest <span id="sort-upfront_investment" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('upsell_potential')" title="Upsell Potential">Upsell <span id="sort-upsell_potential" class="text-xs"></span></th>
+            <th class="px-2 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap text-center text-xs" onclick="sortBy('evergreen_potential')" title="Evergreen Potential">Ever <span id="sort-evergreen_potential" class="text-xs"></span></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('replicability')">Replic. <span id="sort-replicability" class="text-xs"></span></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('status')">Status <span id="sort-status" class="text-xs"></span></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 cursor-pointer hover:text-indigo-600 whitespace-nowrap" onclick="sortBy('batch')">Batch <span id="sort-batch" class="text-xs"></span></th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -227,6 +263,7 @@ def generate_index(companies):
     </div>
     <p id="detailOneLiner" class="text-gray-600 mb-2"></p>
     <div id="detailMeta" class="flex flex-wrap gap-2 mb-4"></div>
+    <div id="detailDims" class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4"></div>
     <p id="detailDesc" class="text-gray-500 text-sm mb-4"></p>
     <div class="mb-4"><canvas id="detailRadar" width="400" height="300"></canvas></div>
     <div id="detailReasoning" class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 mb-4"></div>
@@ -251,18 +288,27 @@ function scoreBadge(s) {{
   return `<span class="${{cls}} px-2 py-0.5 rounded-full text-xs font-semibold">${{s}}</span>`;
 }}
 
+function dimBadge(v) {{
+  let cls = v >= 8 ? 'bg-emerald-100 text-emerald-800' : v >= 6 ? 'bg-blue-100 text-blue-800' : v >= 4 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+  return `<span class="${{cls}} inline-block w-7 text-center py-0.5 rounded text-xs font-semibold">${{v}}</span>`;
+}}
+
 function applyFilters() {{
   const q = document.getElementById('searchInput').value.toLowerCase();
   const niche = document.getElementById('nicheSelect').value;
   const status = document.getElementById('statusSelect').value;
   const minScore = parseInt(document.getElementById('minScore').value);
   document.getElementById('minScoreVal').textContent = minScore;
-  filtered = DATA.filter(c =>
-    (!q || c.name.toLowerCase().includes(q) || (c.one_liner||'').toLowerCase().includes(q)) &&
-    (!niche || c.niche_category === niche) &&
-    (!status || c.status === status) &&
-    c.total_score >= minScore
-  );
+  const dimMins = {{}};
+  DIMS.forEach(d => {{ dimMins[d] = parseInt(document.getElementById('dim-' + d).value); document.getElementById('dimval-' + d).textContent = dimMins[d]; }});
+  filtered = DATA.filter(c => {{
+    if (q && !c.name.toLowerCase().includes(q) && !(c.one_liner||'').toLowerCase().includes(q)) return false;
+    if (niche && c.niche_category !== niche) return false;
+    if (status && c.status !== status) return false;
+    if (c.total_score < minScore) return false;
+    for (const d of DIMS) {{ if (dimMins[d] > 0 && c[d] < dimMins[d]) return false; }}
+    return true;
+  }});
   doSort();
   currentPage = 1;
   render();
@@ -293,13 +339,15 @@ function render() {{
   const tbody = document.getElementById('tableBody');
   tbody.innerHTML = page.map((c, i) => `
     <tr class="border-t border-gray-100 hover:bg-indigo-50/40 cursor-pointer transition" onclick="showDetail(${{start + i}})">
-      <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">${{c.name}}</td>
-      <td class="px-4 py-3 text-gray-600 max-w-xs truncate">${{c.one_liner || ''}}</td>
-      <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium" style="background:${{NICHE_COLORS[c.niche_category] || '#737373'}}20;color:${{NICHE_COLORS[c.niche_category] || '#737373'}}">${{c.niche_category}}</span></td>
-      <td class="px-4 py-3">${{scoreBadge(c.total_score)}}</td>
-      <td class="px-4 py-3 text-gray-700">${{c.replicability}}/10</td>
-      <td class="px-4 py-3"><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium ${{c.status==='Active'?'bg-emerald-100 text-emerald-700':'bg-gray-100 text-gray-600'}}">${{c.status||''}}</span></td>
-      <td class="px-4 py-3 text-gray-500">${{c.batch || ''}}</td>
+      <td class="px-2 py-3 text-center"><button onclick="event.stopPropagation();toggleStar(${{c.id}})" class="text-lg leading-none hover:scale-125 transition-transform ${{isStarred(c.id) ? 'text-yellow-500' : 'text-gray-300'}}" title="Toggle shortlist">${{isStarred(c.id) ? '★' : '☆'}}</button></td>
+      <td class="px-3 py-3 font-medium text-gray-900 whitespace-nowrap">${{c.name}}</td>
+      <td class="px-3 py-3 text-gray-600 max-w-xs truncate">${{c.one_liner || ''}}</td>
+      <td class="px-3 py-3"><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium" style="background:${{NICHE_COLORS[c.niche_category] || '#737373'}}20;color:${{NICHE_COLORS[c.niche_category] || '#737373'}}">${{c.niche_category}}</span></td>
+      <td class="px-3 py-3">${{scoreBadge(c.total_score)}}</td>
+      ${{DIMS.map(d => `<td class="px-2 py-3 text-center">${{dimBadge(c[d])}}</td>`).join('')}}
+      <td class="px-3 py-3 text-gray-700">${{c.replicability}}/10</td>
+      <td class="px-3 py-3"><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium ${{c.status==='Active'?'bg-emerald-100 text-emerald-700':'bg-gray-100 text-gray-600'}}">${{c.status||''}}</span></td>
+      <td class="px-3 py-3 text-gray-500">${{c.batch || ''}}</td>
     </tr>
   `).join('');
 
@@ -316,12 +364,17 @@ function render() {{
 
 function goPage(p) {{ currentPage = p; render(); window.scrollTo(0, 300); }}
 
+function resetDimFilters() {{
+  DIMS.forEach(d => {{ document.getElementById('dim-' + d).value = 0; }});
+  applyFilters();
+}}
+
 function resetFilters() {{
   document.getElementById('searchInput').value = '';
   document.getElementById('nicheSelect').value = '';
   document.getElementById('statusSelect').value = '';
   document.getElementById('minScore').value = 0;
-  applyFilters();
+  resetDimFilters();
 }}
 
 function showDetail(idx) {{
@@ -335,6 +388,12 @@ function showDetail(idx) {{
     <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">${{c.status}}</span>
     ${{c.batch ? `<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs">${{c.batch}}</span>` : ''}}
   `;
+  document.getElementById('detailDims').innerHTML = DIMS.map((d, i) =>
+    `<div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-1.5">
+      <span class="text-xs text-gray-600">${{DIM_LABELS[i]}}</span>
+      ${{dimBadge(c[d])}}
+    </div>`
+  ).join('');
   document.getElementById('detailDesc').textContent = c.long_description || '';
   document.getElementById('detailReasoning').innerHTML = '<strong class="text-gray-900">Analysis:</strong> ' + (c.reasoning || '');
   const link = document.getElementById('detailLink');
@@ -356,11 +415,38 @@ function showDetail(idx) {{
 
 function closeDetail() {{ document.getElementById('detailModal').classList.add('hidden'); }}
 
+// Build dimension filter sliders
+const dimContainer = document.getElementById('dimFilters');
+DIMS.forEach((d, i) => {{
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <label class="block text-xs font-medium text-gray-500 mb-1">${{DIM_LABELS[i]}}: <span id="dimval-${{d}}" class="font-semibold text-gray-700">0</span></label>
+    <input id="dim-${{d}}" type="range" min="0" max="10" value="0" class="w-full accent-indigo-600 h-1.5">
+  `;
+  dimContainer.appendChild(div);
+  div.querySelector('input').addEventListener('input', applyFilters);
+}});
+
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('nicheSelect').addEventListener('change', applyFilters);
 document.getElementById('statusSelect').addEventListener('change', applyFilters);
 document.getElementById('minScore').addEventListener('input', applyFilters);
 document.addEventListener('keydown', e => {{ if (e.key === 'Escape') closeDetail(); }});
+
+// ── Shortlist (localStorage) ──
+const SL_KEY = 'yc-fintech-shortlist';
+function getShortlist() {{ try {{ return JSON.parse(localStorage.getItem(SL_KEY) || '[]'); }} catch(e) {{ return []; }} }}
+function saveShortlist(ids) {{ localStorage.setItem(SL_KEY, JSON.stringify(ids)); }}
+function isStarred(id) {{ return getShortlist().includes(id); }}
+function toggleStar(id) {{
+  let ids = getShortlist();
+  if (ids.includes(id)) ids = ids.filter(x => x !== id);
+  else ids.push(id);
+  saveShortlist(ids);
+  render();
+  const badge = document.getElementById('shortlist-count');
+  if (badge) badge.textContent = ids.length > 0 ? ids.length : '';
+}}
 
 // Initial
 sortBy('total_score');
@@ -437,7 +523,7 @@ def generate_analysis(companies):
     html = HEAD.format(title="Analysis")
     html += nav_html("Analysis")
     html += f"""
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="w-full px-4 sm:px-6 lg:px-8 py-8">
   <h1 class="text-2xl font-bold text-gray-900 mb-6">Visual Analysis</h1>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -754,7 +840,7 @@ def generate_recommendations(companies):
     html = HEAD.format(title="Recommendations")
     html += nav_html("Recommendations")
     html += f"""
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="w-full px-4 sm:px-6 lg:px-8 py-8">
 
   <!-- Most Replicable -->
   <div class="mb-10">
@@ -855,6 +941,273 @@ new Chart(document.getElementById('nicheOppChart'), {{
     return html
 
 
+# ── Page 4: Shortlist & Compare ────────────────────────────────────
+
+def generate_shortlist(companies):
+    # Sanitise data for JSON embedding (same as index)
+    safe_companies = []
+    for c in companies:
+        sc = {}
+        for k, v in c.items():
+            if isinstance(v, str):
+                sc[k] = v
+            elif v is None:
+                sc[k] = ""
+            else:
+                sc[k] = v
+        safe_companies.append(sc)
+
+    data_json = json.dumps(safe_companies, ensure_ascii=False)
+    dims_json = json.dumps(DIMENSIONS)
+    dim_labels_json = json.dumps(DIMENSION_LABELS)
+    niche_colors_json = json.dumps(NICHE_COLORS)
+
+    html = HEAD.format(title="Shortlist")
+    html += nav_html("★ Shortlist")
+    html += f"""
+<div class="w-full px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-2">Your Shortlist</h1>
+  <p class="text-gray-500 mb-6">Star companies from the <a href="index.html" class="text-indigo-600 hover:underline">Data Browser</a> to add them here.</p>
+
+  <!-- Empty state -->
+  <div id="emptyState" class="hidden bg-white rounded-xl shadow-sm p-12 text-center mb-6">
+    <div class="text-5xl mb-4">☆</div>
+    <h3 class="text-lg font-semibold text-gray-700 mb-2">No companies starred yet</h3>
+    <p class="text-gray-500 mb-4">Go to the <a href="index.html" class="text-indigo-600 hover:underline font-medium">Data Browser</a> and click the star icon to add companies.</p>
+  </div>
+
+  <!-- Action bar -->
+  <div id="actionBar" class="hidden bg-white rounded-xl shadow-sm p-4 mb-4 flex flex-wrap items-center gap-3">
+    <button onclick="selectAll()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Select All</button>
+    <button onclick="deselectAll()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Deselect All</button>
+    <button id="compareBtn" onclick="compareSelected()" disabled class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-1.5 rounded-lg text-sm font-semibold transition">Compare Selected (0)</button>
+  </div>
+
+  <!-- Shortlist table -->
+  <div id="shortlistTable" class="hidden bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-left">
+          <tr>
+            <th class="px-2 py-3 w-10"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this.checked)" class="accent-indigo-600"></th>
+            <th class="px-2 py-3 w-10"></th>
+            <th class="px-3 py-3 font-semibold text-gray-600 whitespace-nowrap">Name</th>
+            <th class="px-3 py-3 font-semibold text-gray-600 max-w-xs">One-liner</th>
+            <th class="px-3 py-3 font-semibold text-gray-600 whitespace-nowrap">Niche</th>
+            <th class="px-3 py-3 font-semibold text-gray-600 whitespace-nowrap">Score</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Urgency">Urg</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Market Size">Mkt</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Pricing Potential">Price</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Acquisition Cost">Acq</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Delivery Cost">Del</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Uniqueness">Uniq</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Speed to Market">Speed</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Upfront Investment">Invest</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Upsell Potential">Upsell</th>
+            <th class="px-2 py-3 font-semibold text-gray-600 text-center text-xs whitespace-nowrap" title="Evergreen Potential">Ever</th>
+          </tr>
+        </thead>
+        <tbody id="slBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Comparison section -->
+  <div id="compSection" class="hidden mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-900">Comparison</h2>
+      <button onclick="closeComparison()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">Close Comparison</button>
+    </div>
+
+    <!-- Side-by-side dimension table -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="compTable"></table>
+      </div>
+    </div>
+
+    <!-- Radar chart -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <canvas id="compRadar" height="400"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {data_json};
+const DIMS = {dims_json};
+const DIM_LABELS = {dim_labels_json};
+const NICHE_COLORS = {niche_colors_json};
+const SL_KEY = 'yc-fintech-shortlist';
+const COMP_COLORS = ['#4f46e5','#059669','#dc2626','#d97706','#7c3aed','#db2777','#0891b2','#ea580c','#0d9488','#2563eb','#475569','#737373'];
+let selectedIds = new Set();
+let compChart = null;
+
+function getShortlist() {{ try {{ return JSON.parse(localStorage.getItem(SL_KEY) || '[]'); }} catch(e) {{ return []; }} }}
+function saveShortlist(ids) {{ localStorage.setItem(SL_KEY, JSON.stringify(ids)); }}
+
+function scoreBadge(s) {{
+  let cls = s >= 70 ? 'bg-emerald-100 text-emerald-800' : s >= 55 ? 'bg-blue-100 text-blue-800' : s >= 40 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+  return `<span class="${{cls}} px-2 py-0.5 rounded-full text-xs font-semibold">${{s}}</span>`;
+}}
+
+function dimBadge(v) {{
+  let cls = v >= 8 ? 'bg-emerald-100 text-emerald-800' : v >= 6 ? 'bg-blue-100 text-blue-800' : v >= 4 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
+  return `<span class="${{cls}} inline-block w-7 text-center py-0.5 rounded text-xs font-semibold">${{v}}</span>`;
+}}
+
+function updateBadge() {{
+  const ids = getShortlist();
+  const badge = document.getElementById('shortlist-count');
+  if (badge) badge.textContent = ids.length > 0 ? ids.length : '';
+}}
+
+function updateCompareBtn() {{
+  const btn = document.getElementById('compareBtn');
+  btn.textContent = `Compare Selected (${{selectedIds.size}})`;
+  btn.disabled = selectedIds.size < 2;
+}}
+
+function renderShortlist() {{
+  const ids = getShortlist();
+  const starred = DATA.filter(c => ids.includes(c.id));
+
+  if (starred.length === 0) {{
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('actionBar').classList.add('hidden');
+    document.getElementById('shortlistTable').classList.add('hidden');
+    document.getElementById('compSection').classList.add('hidden');
+    return;
+  }}
+
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('actionBar').classList.remove('hidden');
+  document.getElementById('shortlistTable').classList.remove('hidden');
+
+  const tbody = document.getElementById('slBody');
+  tbody.innerHTML = starred.map(c => `
+    <tr class="border-t border-gray-100 hover:bg-indigo-50/40 transition">
+      <td class="px-2 py-3 text-center"><input type="checkbox" ${{selectedIds.has(c.id)?'checked':''}} onchange="toggleSelect(${{c.id}},this.checked)" class="accent-indigo-600"></td>
+      <td class="px-2 py-3 text-center"><button onclick="unstar(${{c.id}})" class="text-lg leading-none text-yellow-500 hover:scale-125 transition-transform" title="Remove from shortlist">★</button></td>
+      <td class="px-3 py-3 font-medium text-gray-900 whitespace-nowrap">${{c.name}}</td>
+      <td class="px-3 py-3 text-gray-600 max-w-xs truncate">${{c.one_liner || ''}}</td>
+      <td class="px-3 py-3"><span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium" style="background:${{NICHE_COLORS[c.niche_category] || '#737373'}}20;color:${{NICHE_COLORS[c.niche_category] || '#737373'}}">${{c.niche_category}}</span></td>
+      <td class="px-3 py-3">${{scoreBadge(c.total_score)}}</td>
+      ${{DIMS.map(d => `<td class="px-2 py-3 text-center">${{dimBadge(c[d])}}</td>`).join('')}}
+    </tr>
+  `).join('');
+
+  // Remove selected ids that are no longer starred
+  const starredIdSet = new Set(starred.map(c => c.id));
+  for (const id of selectedIds) {{
+    if (!starredIdSet.has(id)) selectedIds.delete(id);
+  }}
+  updateCompareBtn();
+}}
+
+function unstar(id) {{
+  let ids = getShortlist().filter(x => x !== id);
+  saveShortlist(ids);
+  selectedIds.delete(id);
+  updateBadge();
+  renderShortlist();
+}}
+
+function toggleSelect(id, checked) {{
+  if (checked) selectedIds.add(id);
+  else selectedIds.delete(id);
+  updateCompareBtn();
+}}
+
+function toggleCheckAll(checked) {{
+  const ids = getShortlist();
+  const starred = DATA.filter(c => ids.includes(c.id));
+  if (checked) starred.forEach(c => selectedIds.add(c.id));
+  else selectedIds.clear();
+  renderShortlist();
+}}
+
+function selectAll() {{
+  const ids = getShortlist();
+  DATA.filter(c => ids.includes(c.id)).forEach(c => selectedIds.add(c.id));
+  document.getElementById('checkAll').checked = true;
+  renderShortlist();
+}}
+
+function deselectAll() {{
+  selectedIds.clear();
+  document.getElementById('checkAll').checked = false;
+  renderShortlist();
+}}
+
+function compareSelected() {{
+  if (selectedIds.size < 2) return;
+  const comps = DATA.filter(c => selectedIds.has(c.id));
+  const section = document.getElementById('compSection');
+  section.classList.remove('hidden');
+
+  // Build comparison table
+  const rows = DIMS.map((d, i) => {{
+    const vals = comps.map(c => c[d]);
+    const best = Math.max(...vals);
+    const cells = comps.map(c => {{
+      const isBest = c[d] === best ? '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 ml-1"></span>' : '';
+      return `<td class="px-3 py-2 text-center whitespace-nowrap">${{dimBadge(c[d])}}${{isBest}}</td>`;
+    }}).join('');
+    return `<tr class="border-t border-gray-100"><td class="px-3 py-2 font-medium text-gray-700 whitespace-nowrap">${{DIM_LABELS[i]}}</td>${{cells}}</tr>`;
+  }});
+
+  // Total score row
+  const scoreVals = comps.map(c => c.total_score);
+  const bestScore = Math.max(...scoreVals);
+  const scoreCells = comps.map(c => {{
+    const isBest = c.total_score === bestScore ? '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 ml-1"></span>' : '';
+    return `<td class="px-3 py-2 text-center whitespace-nowrap font-semibold">${{scoreBadge(c.total_score)}}${{isBest}}</td>`;
+  }}).join('');
+  rows.push(`<tr class="border-t-2 border-gray-300 bg-gray-50"><td class="px-3 py-2 font-bold text-gray-900">Total Score</td>${{scoreCells}}</tr>`);
+
+  const headerCells = comps.map(c => `<th class="px-3 py-3 font-semibold text-gray-900 text-center whitespace-nowrap">${{c.name}}</th>`).join('');
+  document.getElementById('compTable').innerHTML = `
+    <thead class="bg-gray-50"><tr><th class="px-3 py-3 font-semibold text-gray-600">Dimension</th>${{headerCells}}</tr></thead>
+    <tbody>${{rows.join('')}}</tbody>
+  `;
+
+  // Radar chart
+  if (compChart) compChart.destroy();
+  const datasets = comps.map((c, i) => ({{
+    label: c.name,
+    data: DIMS.map(d => c[d]),
+    backgroundColor: COMP_COLORS[i % COMP_COLORS.length] + '20',
+    borderColor: COMP_COLORS[i % COMP_COLORS.length],
+    pointBackgroundColor: COMP_COLORS[i % COMP_COLORS.length],
+    pointRadius: 3,
+    borderWidth: 2,
+  }}));
+  compChart = new Chart(document.getElementById('compRadar'), {{
+    type: 'radar',
+    data: {{ labels: DIM_LABELS, datasets }},
+    options: {{
+      scales: {{ r: {{ min: 0, max: 10, ticks: {{ stepSize: 2 }} }} }},
+      plugins: {{ legend: {{ position: 'bottom' }} }}
+    }}
+  }});
+
+  section.scrollIntoView({{ behavior: 'smooth' }});
+}}
+
+function closeComparison() {{
+  document.getElementById('compSection').classList.add('hidden');
+  if (compChart) {{ compChart.destroy(); compChart = null; }}
+}}
+
+// Initial render
+renderShortlist();
+</script>
+"""
+    html += FOOTER
+    return html
+
+
 # ── Main ────────────────────────────────────────────────────────────
 
 def main():
@@ -882,6 +1235,10 @@ def main():
     print("Generating Recommendations (recommendations.html)...")
     with open(os.path.join(OUT_DIR, "recommendations.html"), "w", encoding="utf-8") as f:
         f.write(generate_recommendations(companies))
+
+    print("Generating Shortlist (shortlist.html)...")
+    with open(os.path.join(OUT_DIR, "shortlist.html"), "w", encoding="utf-8") as f:
+        f.write(generate_shortlist(companies))
 
     print(f"\nDashboard generated in {OUT_DIR}/")
     print("Open dashboard/index.html in your browser to view.")
