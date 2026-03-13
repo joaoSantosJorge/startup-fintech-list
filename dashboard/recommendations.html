@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommendations — YC Fintech Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <nav class="bg-indigo-600 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-2">
+            <span class="text-white font-bold text-lg tracking-tight">YC Fintech Dashboard</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <a href="index.html" class="text-indigo-100 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition">Data Browser</a><a href="analysis.html" class="text-indigo-100 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition">Analysis</a><a href="recommendations.html" class="bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Recommendations</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Most Replicable -->
+  <div class="mb-10">
+    <h2 class="text-2xl font-bold text-gray-900 mb-1">Most Replicable Ideas</h2>
+    <p class="text-gray-500 mb-6">Top-scoring companies with replicability &ge; 7</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Lumen Payments</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">65</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Fastest way to implement payments in your product.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#47556920;color:#475569">Infrastructure/API</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Payment implementation tooling is useful but competes directly with Stripe, Paddle, and other billing platforms that already handle complex pricing. The 10-minute setup claim is attractive but the moat is thin. Payments infrastructure is evergreen but differentiation is challenging.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">SlidePay</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">64</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Banking and Payment Platform APIs. Exited October 2014.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#47556920;color:#475569">Infrastructure/API</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">SlidePay provided APIs for in-person credit card processing, a useful but commoditized space. The API-first approach lowered integration time but faced stiff competition from Square, Stripe, and others. Acquired early, suggesting decent product-market fit but limited defensibility.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Debteye</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">62</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Automate credit counseling.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Debteye automated credit counseling, addressing a real but not hair-on-fire consumer need. The software-based approach has low delivery costs and is relatively quick to build, but differentiation is limited. Consumer willingness to pay for credit counseling tools remains moderate.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">MarketBrief</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">61</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Generate stories from SEC filings.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#73737320;color:#737373">Other</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">MarketBrief generated stories from SEC filings using automated analysis, a niche financial data product. While the technology is replicable with modern NLP, the real-time analysis of 30K+ documents daily provided some differentiation. The market for financial intelligence is persistent but the speci...</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Venue.ink</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">61</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Software for tattoo artists and studios</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#4f46e520;color:#4f46e5">Payments</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Venue.ink targets the niche tattoo industry with booking and payments, solving real admin pain for artists. The market is small but underserved with strong community dynamics for word-of-mouth growth. Relatively easy to build but defensibility comes from network effects within the tattoo community.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Buxfer</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">60</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Buxfer helps you make better spending decisions by making it easy to…</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 8/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Buxfer is a personal finance management tool helping users track spending. The market has many free alternatives (Mint, YNAB, bank apps), making differentiation difficult. Still active with a 1-person team, suggesting a sustainable but small lifestyle business with low overhead.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">SafeButler</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">60</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Your chief servant for shopping insurance</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#05966920;color:#059669">Insurance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">SafeButler is a free insurance comparison tool searching hundreds of sites. The concept is straightforward and relatively easy to replicate with comparison site technology. The insurance market is large and evergreen, but monetization depends on referral commissions and competition from established ...</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Look After My Bills</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">60</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Personal fintech - we optimise your bills, every year, automatically.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Look After My Bills auto-switches energy deals, a useful but not urgent consumer service. Relatively easy to build and replicate as it primarily aggregates and compares energy tariffs. Acquired early, suggesting limited scaling potential as a standalone business.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Postal</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">60</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">An AI native virtual address & mailroom for businesses.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#dc262620;color:#dc2626">Regulatory/Compliance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Postal provides AI-powered virtual mailbox for businesses handling government and compliance communications. The need is real but not urgent for most businesses. The AI compliance recommendation layer adds value but the core virtual address service is commodity-like.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Top Road</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">59</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Payments & analytics for apps in the OpenAI GPT Store</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#4f46e520;color:#4f46e5">Payments</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 8/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Top Road targets a nascent GPT Store creator ecosystem with payments and analytics. The market is entirely dependent on OpenAI's platform decisions, creating high platform risk. Low barrier to entry but also early-mover advantage in a niche space.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Tilt</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">58</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Mobile crowdfunding: The easiest way to collect, fundraise, and sell…</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Tilt enabled group money pooling and crowdfunding, a nice-to-have rather than urgent need. The concept is easily replicable and faces competition from Venmo, PayPal, and social payment apps. Acquired by Airbnb, suggesting the technology had value but the standalone business model was challenging.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Paribus</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">58</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1"></p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Paribus helped consumers get price-adjustment refunds automatically. While the concept is consumer-friendly and easy to acquire users, the value proposition depends on retailer policies which can change. Limited pricing power as consumers expect the service to be free or low-cost.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Stock Unlock</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">58</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Web-app | investment education and analysis tools for retail investors</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#d9770620;color:#d97706">Wealth Management</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Investment education and analysis for retail investors is a crowded space with many free and paid alternatives. Low urgency as investing is discretionary. Easy to build an MVP but hard to differentiate long-term against platforms like Yahoo Finance, Seeking Alpha, and others.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Honeydue</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">56</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">The simplest way for couples to manage money, together</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Honeydue targets couples managing money together, a specific niche within personal finance. While the concept is appealing, it's a nice-to-have rather than must-have, and monetization is challenging in consumer finance. The narrow target market and low willingness to pay limit growth potential.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Hyper</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">56</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Sell memberships to your Discord server</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#4f46e520;color:#4f46e5">Payments</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Hyper enables selling memberships to Discord servers, a niche payment tool for community creators. Easy to build and deliver but limited TAM tied to Discord's ecosystem. Was acquired, suggesting some value but the dependency on a single platform creates risk and limits long-term potential.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Pigeon</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">56</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Simplifying loans with your friends & family.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#0891b220;color:#0891b2">Lending</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Pigeon formalizes loans between friends and family, an interesting niche but low urgency since people already lend informally. The platform reduces social friction around money but monetization is limited. Now inactive, suggesting product-market fit challenges.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Benson</h4>
+            <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">55</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Easily invest like the rich</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#d9770620;color:#d97706">Wealth Management</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Investment advice app helping users know when to buy and sell stocks is a very crowded space. Low differentiation from many free and paid alternatives. The 3-person team keeps costs low but the value proposition is hard to prove and retain users around.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Glassjar</h4>
+            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">54</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">Clean app for check writing</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#db277720;color:#db2777">Consumer Finance</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 8/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Glassjar was a shared expense tracker for flatmates, a low-urgency tool with many free alternatives including Splitwise. The market is small and willingness to pay is low among the target demographic of renters sharing flats. Very easy to replicate as a simple CRUD application.</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">Tipjoy</h4>
+            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">53</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">social micropayments</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#4f46e520;color:#4f46e5">Payments</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 8/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">Tipjoy was an early social micropayments platform, ahead of its time in 2008. Micropayments have historically struggled with consumer adoption and unit economics. The concept was easily replicable and the company shut down, though the underlying idea has resurfaced in various forms like tipping on s...</p>
+          </details>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 flex flex-col">
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="font-semibold text-gray-900">GoSats</h4>
+            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs font-semibold ml-2 whitespace-nowrap">53</span>
+          </div>
+          <p class="text-sm text-gray-600 mb-3 flex-1">GoSats helps you earn free bitcoin when you shop in India.</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#7c3aed20;color:#7c3aed">Crypto/Blockchain</span>
+            <span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-medium">Replic: 7/10</span>
+          </div>
+          <details class="text-xs text-gray-500">
+            <summary class="cursor-pointer text-indigo-600 font-medium">Analysis</summary>
+            <p class="mt-1">GoSats offers bitcoin cashback rewards for shopping in India, a nice-to-have rather than essential need. The model depends on merchant partnerships and bitcoin price appreciation for user retention. Low switching costs and several global competitors in the bitcoin rewards space.</p>
+          </details>
+        </div>
+    </div>
+  </div>
+
+  <!-- Best Niches to Enter -->
+  <div class="mb-10">
+    <h2 class="text-2xl font-bold text-gray-900 mb-1">Best Niches to Enter</h2>
+    <p class="text-gray-500 mb-6">Composite opportunity score (avg quality + replicability + market gap)</p>
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <canvas id="nicheOppChart" height="300"></canvas>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4" style="border-color:#dc2626">
+          <h4 class="font-semibold text-gray-900 mb-1">Regulatory/Compliance</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div><div class="font-bold text-indigo-600">56.7</div><div class="text-xs text-gray-500">Opp. Score</div></div>
+            <div><div class="font-bold text-gray-800">65.8</div><div class="text-xs text-gray-500">Avg Score</div></div>
+            <div><div class="font-bold text-gray-800">15</div><div class="text-xs text-gray-500">Companies</div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4" style="border-color:#737373">
+          <h4 class="font-semibold text-gray-900 mb-1">Other</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div><div class="font-bold text-indigo-600">54.6</div><div class="text-xs text-gray-500">Opp. Score</div></div>
+            <div><div class="font-bold text-gray-800">56.8</div><div class="text-xs text-gray-500">Avg Score</div></div>
+            <div><div class="font-bold text-gray-800">15</div><div class="text-xs text-gray-500">Companies</div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4" style="border-color:#ea580c">
+          <h4 class="font-semibold text-gray-900 mb-1">Accounting/Tax</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div><div class="font-bold text-indigo-600">52.7</div><div class="text-xs text-gray-500">Opp. Score</div></div>
+            <div><div class="font-bold text-gray-800">64.6</div><div class="text-xs text-gray-500">Avg Score</div></div>
+            <div><div class="font-bold text-gray-800">21</div><div class="text-xs text-gray-500">Companies</div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4" style="border-color:#0d9488">
+          <h4 class="font-semibold text-gray-900 mb-1">Embedded Finance</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div><div class="font-bold text-indigo-600">51.5</div><div class="text-xs text-gray-500">Opp. Score</div></div>
+            <div><div class="font-bold text-gray-800">62.3</div><div class="text-xs text-gray-500">Avg Score</div></div>
+            <div><div class="font-bold text-gray-800">15</div><div class="text-xs text-gray-500">Companies</div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4" style="border-color:#4f46e5">
+          <h4 class="font-semibold text-gray-900 mb-1">Payments</h4>
+          <div class="grid grid-cols-3 gap-2 text-center text-sm">
+            <div><div class="font-bold text-indigo-600">43.4</div><div class="text-xs text-gray-500">Opp. Score</div></div>
+            <div><div class="font-bold text-gray-800">61.5</div><div class="text-xs text-gray-500">Avg Score</div></div>
+            <div><div class="font-bold text-gray-800">113</div><div class="text-xs text-gray-500">Companies</div></div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Strategic Takeaways -->
+  <div class="mb-10">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">Strategic Takeaways</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-indigo-600 font-bold text-2xl mb-1">7.9/10</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Strongest Dimension</h4>
+        <p class="text-sm text-gray-600"><strong>Evergreen Potential</strong> scores highest on average across all companies, signaling a shared market strength.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-amber-600 font-bold text-2xl mb-1">&sigma; 1.44</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Highest Variance</h4>
+        <p class="text-sm text-gray-600"><strong>Urgency</strong> has the most spread — a differentiation opportunity where the right strategy matters.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-emerald-600 font-bold text-2xl mb-1">7</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Sweet Spot Companies</h4>
+        <p class="text-sm text-gray-600">Companies scoring &ge; 65 with replicability &ge; 6. High quality <em>and</em> feasible to replicate.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-violet-600 font-bold text-2xl mb-1">Regulatory/Compliance</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Underserved Niche</h4>
+        <p class="text-sm text-gray-600">Fewest companies among above-average niches (only 15 companies, avg 65.8). Less crowded, strong signal.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-blue-600 font-bold text-2xl mb-1">61.0 vs 57.4</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Active vs Dead Signal</h4>
+        <p class="text-sm text-gray-600">451 active companies avg 61.0 vs 156 inactive at 57.4. Higher-scoring ideas tend to survive.</p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm p-5">
+        <div class="text-orange-600 font-bold text-2xl mb-1">5</div>
+        <h4 class="font-semibold text-gray-900 mb-1">Quick Wins</h4>
+        <p class="text-sm text-gray-600">Companies with speed_to_market &ge; 8 AND upfront_investment &ge; 8. Fast to build, cheap to start. Top: Buxfer, Top Road, Glassjar.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+const NICHE_COLORS = {"Payments": "#4f46e5", "Banking": "#2563eb", "Lending": "#0891b2", "Insurance": "#059669", "Wealth Management": "#d97706", "Crypto/Blockchain": "#7c3aed", "Infrastructure/API": "#475569", "Accounting/Tax": "#ea580c", "Consumer Finance": "#db2777", "Embedded Finance": "#0d9488", "Regulatory/Compliance": "#dc2626", "Other": "#737373"};
+const NICHE_OPP = [{"niche": "Regulatory/Compliance", "count": 15, "avg_score": 65.8, "avg_replic": 4.3, "opp_score": 56.7}, {"niche": "Other", "count": 15, "avg_score": 56.8, "avg_replic": 5.1, "opp_score": 54.6}, {"niche": "Accounting/Tax", "count": 21, "avg_score": 64.6, "avg_replic": 4.3, "opp_score": 52.7}, {"niche": "Embedded Finance", "count": 15, "avg_score": 62.3, "avg_replic": 3.1, "opp_score": 51.5}, {"niche": "Payments", "count": 113, "avg_score": 61.5, "avg_replic": 4.2, "opp_score": 43.4}, {"niche": "Consumer Finance", "count": 74, "avg_score": 57.5, "avg_replic": 4.9, "opp_score": 43.4}, {"niche": "Insurance", "count": 55, "avg_score": 62.8, "avg_replic": 3.9, "opp_score": 43.2}, {"niche": "Wealth Management", "count": 79, "avg_score": 59.4, "avg_replic": 4.3, "opp_score": 42.7}, {"niche": "Infrastructure/API", "count": 47, "avg_score": 62.4, "avg_replic": 3.7, "opp_score": 42.2}, {"niche": "Lending", "count": 70, "avg_score": 60.0, "avg_replic": 3.8, "opp_score": 41.4}, {"niche": "Banking", "count": 58, "avg_score": 59.1, "avg_replic": 3.5, "opp_score": 40.1}, {"niche": "Crypto/Blockchain", "count": 45, "avg_score": 54.4, "avg_replic": 4.2, "opp_score": 40.0}];
+
+Chart.register(ChartDataLabels);
+Chart.defaults.set('plugins.datalabels', { display: false });
+
+new Chart(document.getElementById('nicheOppChart'), {
+  type: 'bar',
+  data: {
+    labels: NICHE_OPP.map(n => n.niche),
+    datasets: [{
+      label: 'Opportunity Score',
+      data: NICHE_OPP.map(n => n.opp_score),
+      backgroundColor: NICHE_OPP.map(n => (NICHE_COLORS[n.niche] || '#737373') + 'cc'),
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      datalabels: { display: true, anchor: 'end', align: 'end', font: { size: 11, weight: 600 }, color: '#374151' }
+    },
+    scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45, minRotation: 45 } } },
+  }
+});
+</script>
+
+<footer class="text-center text-xs text-gray-400 py-8">
+  Generated by YC Fintech Analysis Pipeline
+</footer>
+</body>
+</html>

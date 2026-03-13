@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis — YC Fintech Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <nav class="bg-indigo-600 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-2">
+            <span class="text-white font-bold text-lg tracking-tight">YC Fintech Dashboard</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <a href="index.html" class="text-indigo-100 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition">Data Browser</a><a href="analysis.html" class="bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Analysis</a><a href="recommendations.html" class="text-indigo-100 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-medium transition">Recommendations</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-2xl font-bold text-gray-900 mb-6">Visual Analysis</h1>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Top 20 Companies -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Top 20 Companies</h3>
+      <canvas id="top20Chart" height="400"></canvas>
+    </div>
+
+    <!-- Score Distribution -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Score Distribution</h3>
+      <canvas id="distChart" height="400"></canvas>
+    </div>
+
+    <!-- Best Niches -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Best Niches by Avg Score</h3>
+      <canvas id="nicheChart" height="400"></canvas>
+    </div>
+
+    <!-- Dimension Averages -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Dimension Averages (Global)</h3>
+      <canvas id="dimChart" height="400"></canvas>
+    </div>
+
+    <!-- Niche Dimension Profiles -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Niche Dimension Profiles</h3>
+      <select id="nicheProfileSelect" class="border border-gray-300 rounded-lg px-3 py-2 text-sm mb-4 focus:ring-2 focus:ring-indigo-500 outline-none"></select>
+      <canvas id="nicheProfileChart" height="350"></canvas>
+    </div>
+
+    <!-- Active vs Inactive -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Active vs Inactive</h3>
+      <canvas id="statusChart" height="400"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const AD = {"top20": [{"name": "Stripe", "score": 73, "niche": "Infrastructure/API"}, {"name": "Razorpay", "score": 71, "niche": "Payments"}, {"name": "Tremendous", "score": 70, "niche": "Payments"}, {"name": "Clear", "score": 70, "niche": "Accounting/Tax"}, {"name": "Brex", "score": 70, "niche": "Banking"}, {"name": "Increase", "score": 69, "niche": "Infrastructure/API"}, {"name": "FlyCode", "score": 69, "niche": "Payments"}, {"name": "Pump.co", "score": 69, "niche": "Other"}, {"name": "Sphinx", "score": 69, "niche": "Regulatory/Compliance"}, {"name": "Fenrock AI (YC W26)", "score": 69, "niche": "Regulatory/Compliance"}, {"name": "Khatabook", "score": 68, "niche": "Accounting/Tax"}, {"name": "OkCredit", "score": 68, "niche": "Accounting/Tax"}, {"name": "Keeper", "score": 68, "niche": "Accounting/Tax"}, {"name": "Method Financial", "score": 68, "niche": "Infrastructure/API"}, {"name": "Heru", "score": 68, "niche": "Accounting/Tax"}, {"name": "Sei", "score": 68, "niche": "Regulatory/Compliance"}, {"name": "Stairs Financial", "score": 68, "niche": "Consumer Finance"}, {"name": "JustPaid", "score": 68, "niche": "Payments"}, {"name": "Hadrius", "score": 68, "niche": "Regulatory/Compliance"}, {"name": "Rally Tax", "score": 68, "niche": "Accounting/Tax"}], "buckets": {"Excellent (70+)": 5, "Strong (55-69)": 524, "Average (40-54)": 78, "Weak (<40)": 0}, "niche_stats": [{"niche": "Regulatory/Compliance", "count": 15, "avg_score": 65.8, "dim_avgs": {"urgency": 7.8, "market_size": 7.1, "pricing_potential": 7.5, "acquisition_cost": 5.1, "delivery_cost": 7.2, "uniqueness": 5.7, "speed_to_market": 4.5, "upfront_investment": 4.6, "upsell_potential": 7.6, "evergreen_potential": 8.7}}, {"niche": "Accounting/Tax", "count": 21, "avg_score": 64.6, "dim_avgs": {"urgency": 7.1, "market_size": 7.4, "pricing_potential": 6.2, "acquisition_cost": 5.6, "delivery_cost": 7.6, "uniqueness": 5.7, "speed_to_market": 4.6, "upfront_investment": 4.7, "upsell_potential": 7.4, "evergreen_potential": 8.4}}, {"niche": "Insurance", "count": 55, "avg_score": 62.8, "dim_avgs": {"urgency": 6.9, "market_size": 7.2, "pricing_potential": 6.7, "acquisition_cost": 5.2, "delivery_cost": 6.5, "uniqueness": 6.1, "speed_to_market": 4.1, "upfront_investment": 4.1, "upsell_potential": 7.3, "evergreen_potential": 8.7}}, {"niche": "Infrastructure/API", "count": 47, "avg_score": 62.4, "dim_avgs": {"urgency": 6.7, "market_size": 7.0, "pricing_potential": 7.0, "acquisition_cost": 4.9, "delivery_cost": 7.1, "uniqueness": 6.2, "speed_to_market": 3.9, "upfront_investment": 4.1, "upsell_potential": 7.3, "evergreen_potential": 8.2}}, {"niche": "Embedded Finance", "count": 15, "avg_score": 62.3, "dim_avgs": {"urgency": 7.3, "market_size": 7.6, "pricing_potential": 6.9, "acquisition_cost": 5.3, "delivery_cost": 6.5, "uniqueness": 5.5, "speed_to_market": 3.6, "upfront_investment": 3.1, "upsell_potential": 7.9, "evergreen_potential": 8.5}}, {"niche": "Payments", "count": 113, "avg_score": 61.5, "dim_avgs": {"urgency": 6.9, "market_size": 7.1, "pricing_potential": 5.9, "acquisition_cost": 5.3, "delivery_cost": 6.9, "uniqueness": 5.5, "speed_to_market": 4.4, "upfront_investment": 4.3, "upsell_potential": 7.0, "evergreen_potential": 8.1}}, {"niche": "Lending", "count": 70, "avg_score": 60.0, "dim_avgs": {"urgency": 7.3, "market_size": 7.1, "pricing_potential": 6.2, "acquisition_cost": 5.2, "delivery_cost": 5.9, "uniqueness": 5.8, "speed_to_market": 4.0, "upfront_investment": 3.5, "upsell_potential": 6.8, "evergreen_potential": 8.2}}, {"niche": "Wealth Management", "count": 79, "avg_score": 59.4, "dim_avgs": {"urgency": 5.3, "market_size": 6.8, "pricing_potential": 6.3, "acquisition_cost": 5.0, "delivery_cost": 7.1, "uniqueness": 5.4, "speed_to_market": 4.5, "upfront_investment": 4.3, "upsell_potential": 6.9, "evergreen_potential": 7.8}}, {"niche": "Banking", "count": 58, "avg_score": 59.1, "dim_avgs": {"urgency": 6.8, "market_size": 7.1, "pricing_potential": 5.6, "acquisition_cost": 5.2, "delivery_cost": 6.2, "uniqueness": 5.1, "speed_to_market": 3.8, "upfront_investment": 3.5, "upsell_potential": 7.5, "evergreen_potential": 8.3}}, {"niche": "Consumer Finance", "count": 74, "avg_score": 57.5, "dim_avgs": {"urgency": 5.8, "market_size": 6.7, "pricing_potential": 4.6, "acquisition_cost": 5.4, "delivery_cost": 6.8, "uniqueness": 4.9, "speed_to_market": 5.1, "upfront_investment": 4.6, "upsell_potential": 6.3, "evergreen_potential": 7.4}}, {"niche": "Other", "count": 15, "avg_score": 56.8, "dim_avgs": {"urgency": 5.1, "market_size": 5.8, "pricing_potential": 5.7, "acquisition_cost": 5.1, "delivery_cost": 7.3, "uniqueness": 5.7, "speed_to_market": 5.1, "upfront_investment": 4.8, "upsell_potential": 5.7, "evergreen_potential": 6.5}}, {"niche": "Crypto/Blockchain", "count": 45, "avg_score": 54.4, "dim_avgs": {"urgency": 5.2, "market_size": 6.5, "pricing_potential": 5.5, "acquisition_cost": 4.6, "delivery_cost": 6.9, "uniqueness": 5.2, "speed_to_market": 4.5, "upfront_investment": 4.1, "upsell_potential": 6.1, "evergreen_potential": 6.0}}], "global_dims": {"urgency": 6.4, "market_size": 7.0, "pricing_potential": 6.0, "acquisition_cost": 5.2, "delivery_cost": 6.7, "uniqueness": 5.5, "speed_to_market": 4.4, "upfront_investment": 4.1, "upsell_potential": 6.9, "evergreen_potential": 7.9}, "status_stats": [{"status": "Public", "count": 2, "avg_score": 63.5}, {"status": "Active", "count": 451, "avg_score": 61.0}, {"status": "Acquired", "count": 74, "avg_score": 59.6}, {"status": "Inactive", "count": 80, "avg_score": 55.2}]};
+const DIM_LABELS = ["Urgency", "Market Size", "Pricing Potential", "Acquisition Cost", "Delivery Cost", "Uniqueness", "Speed To Market", "Upfront Investment", "Upsell Potential", "Evergreen Potential"];
+const DIMS = ["urgency", "market_size", "pricing_potential", "acquisition_cost", "delivery_cost", "uniqueness", "speed_to_market", "upfront_investment", "upsell_potential", "evergreen_potential"];
+const NICHE_COLORS = {"Payments": "#4f46e5", "Banking": "#2563eb", "Lending": "#0891b2", "Insurance": "#059669", "Wealth Management": "#d97706", "Crypto/Blockchain": "#7c3aed", "Infrastructure/API": "#475569", "Accounting/Tax": "#ea580c", "Consumer Finance": "#db2777", "Embedded Finance": "#0d9488", "Regulatory/Compliance": "#dc2626", "Other": "#737373"};
+
+Chart.register(ChartDataLabels);
+Chart.defaults.set('plugins.datalabels', { display: false });
+
+// 1. Top 20 horizontal bar
+new Chart(document.getElementById('top20Chart'), {
+  type: 'bar',
+  data: {
+    labels: AD.top20.map(c => c.name),
+    datasets: [{
+      data: AD.top20.map(c => c.score),
+      backgroundColor: AD.top20.map(c => (NICHE_COLORS[c.niche] || '#737373') + 'cc'),
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'end', font: { size: 11, weight: 600 }, color: '#374151' } },
+    scales: { x: { beginAtZero: true, max: 100 } },
+  }
+});
+
+// 2. Score Distribution donut
+new Chart(document.getElementById('distChart'), {
+  type: 'doughnut',
+  data: {
+    labels: Object.keys(AD.buckets),
+    datasets: [{
+      data: Object.values(AD.buckets),
+      backgroundColor: ['#059669', '#2563eb', '#d97706', '#dc2626'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    plugins: {
+      datalabels: { display: true, color: '#fff', font: { weight: 'bold', size: 14 }, formatter: v => v },
+      legend: { position: 'bottom' }
+    },
+    cutout: '55%',
+  }
+});
+
+// 3. Best Niches bar
+new Chart(document.getElementById('nicheChart'), {
+  type: 'bar',
+  data: {
+    labels: AD.niche_stats.map(n => n.niche),
+    datasets: [{
+      label: 'Avg Score',
+      data: AD.niche_stats.map(n => n.avg_score),
+      backgroundColor: AD.niche_stats.map(n => (NICHE_COLORS[n.niche] || '#737373') + 'cc'),
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      datalabels: { display: true, anchor: 'end', align: 'end', font: { size: 10 }, color: '#6b7280',
+        formatter: (v, ctx) => v + ' (n=' + AD.niche_stats[ctx.dataIndex].count + ')'
+      }
+    },
+    scales: { y: { beginAtZero: true, max: 100 }, x: { ticks: { maxRotation: 45, minRotation: 45 } } },
+  }
+});
+
+// 4. Dimension Averages radar
+new Chart(document.getElementById('dimChart'), {
+  type: 'radar',
+  data: {
+    labels: DIM_LABELS,
+    datasets: [{
+      label: 'Global Average',
+      data: DIMS.map(d => AD.global_dims[d]),
+      backgroundColor: 'rgba(79,70,229,0.15)',
+      borderColor: '#4f46e5',
+      pointBackgroundColor: '#4f46e5',
+      pointRadius: 4,
+    }]
+  },
+  options: { scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { datalabels: { display: false } } }
+});
+
+// 5. Niche Dimension Profiles
+const npSelect = document.getElementById('nicheProfileSelect');
+AD.niche_stats.forEach(n => {
+  const opt = document.createElement('option');
+  opt.value = n.niche;
+  opt.textContent = n.niche;
+  npSelect.appendChild(opt);
+});
+let npChart = null;
+function renderNicheProfile() {
+  const niche = npSelect.value;
+  const ns = AD.niche_stats.find(n => n.niche === niche);
+  if (!ns) return;
+  if (npChart) npChart.destroy();
+  npChart = new Chart(document.getElementById('nicheProfileChart'), {
+    type: 'radar',
+    data: {
+      labels: DIM_LABELS,
+      datasets: [
+        { label: niche, data: DIMS.map(d => ns.dim_avgs[d]), backgroundColor: (NICHE_COLORS[niche]||'#737373') + '25', borderColor: NICHE_COLORS[niche]||'#737373', pointBackgroundColor: NICHE_COLORS[niche]||'#737373', pointRadius: 4 },
+        { label: 'Global Avg', data: DIMS.map(d => AD.global_dims[d]), backgroundColor: 'rgba(156,163,175,0.1)', borderColor: '#9ca3af', borderDash: [5,5], pointRadius: 2 },
+      ]
+    },
+    options: { scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }, plugins: { datalabels: { display: false } } }
+  });
+}
+npSelect.addEventListener('change', renderNicheProfile);
+renderNicheProfile();
+
+// 6. Active vs Inactive grouped bar
+new Chart(document.getElementById('statusChart'), {
+  type: 'bar',
+  data: {
+    labels: AD.status_stats.map(s => s.status),
+    datasets: [
+      { label: 'Count', data: AD.status_stats.map(s => s.count), backgroundColor: '#4f46e5cc', borderRadius: 4, yAxisID: 'y' },
+      { label: 'Avg Score', data: AD.status_stats.map(s => s.avg_score), backgroundColor: '#059669cc', borderRadius: 4, yAxisID: 'y1' },
+    ]
+  },
+  options: {
+    plugins: {
+      datalabels: { display: true, anchor: 'end', align: 'end', font: { size: 11, weight: 600 }, color: '#374151' }
+    },
+    scales: {
+      y: { type: 'linear', position: 'left', title: { display: true, text: 'Count' } },
+      y1: { type: 'linear', position: 'right', title: { display: true, text: 'Avg Score' }, grid: { drawOnChartArea: false } },
+    }
+  }
+});
+</script>
+
+<footer class="text-center text-xs text-gray-400 py-8">
+  Generated by YC Fintech Analysis Pipeline
+</footer>
+</body>
+</html>
